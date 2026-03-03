@@ -37,6 +37,21 @@ docker run -v finally-data:/app/db -p 8000:8000 --env-file .env finally
 # Open http://localhost:8000
 ```
 
+### Run Without Docker
+
+```bash
+uv run --project backend --extra dev uvicorn app.main:app --reload --port 8000
+```
+
+### Frontend (Next.js)
+
+```bash
+cd frontend
+npm install
+npm run dev      # local Next.js dev server
+npm run build    # static export to frontend/out
+```
+
 ## Environment Variables
 
 | Variable | Required | Description |
@@ -56,6 +71,39 @@ finally/
 ├── db/          # SQLite volume mount (runtime)
 └── scripts/     # Start/stop helpers
 ```
+
+## Plugin Validation
+
+Validate Cursor plugin manifests and related files with:
+
+```bash
+bash scripts/validate-plugins-readonly.sh
+```
+
+The validator is read-only and checks marketplace/plugin JSON, skills/rules layout, hook script references, and MCP config sanity.
+
+## Install Local Skill
+
+To register local in-repo skills for Codex session discovery:
+
+```bash
+mkdir -p ~/.codex/skills/start-simple
+ln -sf "$(pwd)/plugins/starter-simple/skills/code-reviewer/SKILL.md" \
+  ~/.codex/skills/start-simple/SKILL.md
+
+mkdir -p ~/.codex/skills/start-advanced
+ln -sf "$(pwd)/plugins/starter-advanced/skills/code-reviewer/SKILL.md" \
+  ~/.codex/skills/start-advanced/SKILL.md
+```
+
+Installed skill names in `~/.codex/skills` should be `start-simple` and `start-advanced`.
+Verify both are present with:
+
+```bash
+ls -la ~/.codex/skills/start-*
+```
+
+Restart Cursor/Codex after installing so the skills are picked up by new sessions.
 
 ## License
 
